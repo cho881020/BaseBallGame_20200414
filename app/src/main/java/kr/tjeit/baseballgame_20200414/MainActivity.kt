@@ -2,6 +2,7 @@ package kr.tjeit.baseballgame_20200414
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -79,6 +80,10 @@ class MainActivity : BaseActivity() {
             chatings.add(Chat(inputEdt.text.toString(), "USER"))
             mChatAdapter?.notifyDataSetChanged()
 
+//            리스트뷰를 맨 밑으로 끌어내려주는 코드
+            chatListView.smoothScrollToPosition(chatings.size-1)
+
+//            시도 횟수를 1 증가.
             tryCount++
 
 //            ?S ?B인지 판단해서 => 컴퓨터가 답장.
@@ -128,18 +133,34 @@ class MainActivity : BaseActivity() {
 
         }
 
-//        총 몇개의 S / B 인지 담겨있게 됨.
-        chatings.add(Chat("${strikeCount}S ${ballCount}B 입니다.", "COMPUTER"))
-        mChatAdapter?.notifyDataSetChanged()
+
+        Handler().postDelayed({
+
+            //        총 몇개의 S / B 인지 담겨있게 됨.
+            chatings.add(Chat("${strikeCount}S ${ballCount}B 입니다.", "COMPUTER"))
+            mChatAdapter?.notifyDataSetChanged()
+            chatListView.smoothScrollToPosition(chatings.size-1)
+
+        }, 800)
+
 
         if (strikeCount == 3) {
-            chatings.add(Chat("축하합니다!!", "COMPUTER"))
-            mChatAdapter?.notifyDataSetChanged()
+
+            Handler().postDelayed({
+                chatings.add(Chat("축하합니다!!", "COMPUTER"))
+                mChatAdapter?.notifyDataSetChanged()
 
 //            몇번 시도만에 맞췄는지? tryCount가 몇인가? 출력.
 
-            chatings.add(Chat("${tryCount}회 만에 맞췄습니다.!", "COMPUTER"))
-            mChatAdapter?.notifyDataSetChanged()
+                chatings.add(Chat("${tryCount}회 만에 맞췄습니다.!", "COMPUTER"))
+                mChatAdapter?.notifyDataSetChanged()
+
+//            게임이 종료되면 입력하지 못하게.
+                inputEdt.isEnabled = false
+                okBtn.isEnabled = false
+
+            }, 1500)
+
 
 
         }
